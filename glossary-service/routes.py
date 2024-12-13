@@ -27,12 +27,6 @@ def list_products(db: Session = Depends(get_db)):
     return db_products
 
 
-@router.get("/products/search/", response_model=list[ProductResponse])
-def search_products(name: str, db: Session = Depends(get_db)):
-    db_products = db.query(Product).filter(Product.name.ilike(f"%{name}%")).all()
-    return db_products
-
-
 @router.post("/products/", response_model=ProductResponse)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_product = Product(
