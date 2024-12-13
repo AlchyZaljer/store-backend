@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class StorageItemBase(BaseModel):
