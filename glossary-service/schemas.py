@@ -6,7 +6,7 @@ class ProductBase(BaseModel):
     name: str = Field(
         ...,
         max_length=255,
-        description="Name of the product")
+        description="Name of the product (max 250 characters)")
     price: float = Field(
         ...,
         gt=0,
@@ -25,7 +25,7 @@ class ProductUpdate(BaseModel):
     name: Optional[str] = Field(
         None,
         max_length=255,
-        description="Updated name of the product")
+        description="Updated name of the product (max 250 characters)")
     price: Optional[float] = Field(
         None,
         gt=0,
