@@ -1,8 +1,10 @@
 from database import engine, Base
+from sqlalchemy import inspect
 from models import Product
 
 
-if not engine.dialect.has_table(engine, "products"):
+inspector = inspect(engine)
+if not inspector.has_table("products"):
     Base.metadata.create_all(bind=engine)
     print("Tables created successfully.")
 else:
