@@ -50,5 +50,4 @@ class StorageItemResponse(StorageItemBase):
         ...,
         description="ID of the storage item")
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
