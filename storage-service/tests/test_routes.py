@@ -18,7 +18,7 @@ def test_add_item(client, test_item_data):
 
 
 @pytest.mark.usefixtures("override_get_db")
-def test_get_item_by_id(client, test_item_data):
+def test_get_item(client, test_item_data):
     add_response = client.post("/items/add/", json=test_item_data)
     item_id = add_response.json()["id"]
 
@@ -61,4 +61,4 @@ def test_remove_item(client, test_item_data):
 
     remove_response = client.post(f"/items/remove/?item_id={item_id}&quantity=5")
     assert remove_response.status_code == 200
-    assert remove_response.json()["quantity"] == 0
+    assert remove_response.json()["message"] == f"Product {item_id} deleted"

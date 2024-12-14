@@ -1,3 +1,5 @@
+from typing import Union
+
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
@@ -15,7 +17,7 @@ def root():
 
 
 @router.get("/items/{item_id}", response_model=StorageItemResponse)
-def get_item_by_id(item_id: int, db: Session = Depends(get_db)):
+def get_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(StorageItem).filter(StorageItem.id == item_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -62,7 +64,7 @@ def add_item(item: StorageItemCreate, db: Session = Depends(get_db)):
     return db_item
 
 
-@router.post("/items/remove/", response_model=StorageItemResponse)
+@router.post("/items/remove/", response_model=Union[StorageItemResponse, dict])
 def remove_item(item_id: int, quantity: int, db: Session = Depends(get_db)):
     db_item = db.query(StorageItem).filter(StorageItem.id == item_id).first()
     if not db_item:
@@ -77,6 +79,8 @@ def remove_item(item_id: int, quantity: int, db: Session = Depends(get_db)):
 
     if db_item.quantity == 0:
         db.delete(db_item)
+        db.commit()
+        return {"message": f"Product {item_id} deleted"}
 
     db.commit()
     return db_item
