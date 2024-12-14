@@ -10,7 +10,7 @@ class StorageItemBase(BaseModel):
         description="Name of the storage item (max 250 characters)")
     quantity: int = Field(
         ...,
-        ge=0,
+        gt=0,
         description="Quantity of the storage item (must be greater than 0)")
     price: float = Field(
         ...,
