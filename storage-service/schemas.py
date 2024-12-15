@@ -1,53 +1,30 @@
-from typing import Optional
-
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 
 
 class StorageItemBase(BaseModel):
-    name: str = Field(
+    product_id: int = Field(
         ...,
-        max_length=255,
-        description="Name of the storage item (max 250 characters)")
+        description="ID of the product")
     quantity: int = Field(
         ...,
         gt=0,
-        description="Quantity of the storage item (must be greater than 0)")
-    price: float = Field(
-        ...,
-        gt=0,
-        description="Price of the storage item (must be greater than 0)")
-    description: Optional[str] = Field(
-        None,
-        max_length=500,
-        description="Description of the storage item (max 500 characters)")
+        description="Quantity of the product (must be greater than 0)")
 
 
 class StorageItemCreate(StorageItemBase):
     pass
 
 
-class StorageItemUpdate(BaseModel):
-    name: Optional[str] = Field(
-        None,
-        max_length=255,
-        description="Updated name of the storage item (max 250 characters)")
-    quantity: Optional[int] = Field(
-        None,
+class StorageItemRemove(StorageItemBase):
+    pass
+
+
+class StorageItemUpdate(StorageItemBase):
+    quantity: int = Field(
+        ...,
         ge=0,
-        description="Updated quantity of the storage item (must be greater than 0)")
-    price: Optional[float] = Field(
-        None,
-        gt=0,
-        description="Updated price of the storage item (must be greater than 0)")
-    description: Optional[str] = Field(
-        None,
-        max_length=500,
-        description="Updated description of the storage item (max 500 characters)")
+        description="Updated quantity of the product (must be greater than or equal 0)")
 
 
 class StorageItemResponse(StorageItemBase):
-    id: int = Field(
-        ...,
-        description="ID of the storage item")
-
-    model_config = ConfigDict(from_attributes=True)
+    pass
