@@ -13,3 +13,4 @@ class Order(BaseModel):
     date: datetime
     items: list[OrderItem]
     discount: float = 0.0
+    status: str = "Pending"

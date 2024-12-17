@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -60,5 +61,11 @@ class OrderResponse(OrderBase):
     id: str = Field(
         ...,
         description="Order ID")
+    date: datetime = Field(
+        ...,
+        description="Date of the order creation")
+    status: str = Field(
+        "Pending",
+        description="Status of the order (e.g., Pending, Completed, Cancelled)")
 
     model_config = ConfigDict(from_attributes=True)

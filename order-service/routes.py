@@ -4,6 +4,7 @@ from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Depends
 
 from database import get_db
+from publisher import publish_to_rabbitmq
 from schemas import OrderCreate, OrderResponse, OrderUpdate
 from utils import reserve_products, return_products
 
@@ -89,3 +90,18 @@ async def delete_order(order_id: str, db=Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to delete order")
 
     return {"message": f"Order {order_id} deleted successfully"}
+
+
+@router.post("/orders/{order_id}/confirm", response_model=dict)
+async def confirm_order(order_id: str, db=Depends(get_db)):
+    result = await db.orders.update_one(
+        {"_id": ObjectId(order_id)},
+        {"$set": {"status": "completed"}}
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    publish_to_rabbitmq({'id': order_id})
+
+    return {"message": f"Order {order_id} confirmed successfully"}
