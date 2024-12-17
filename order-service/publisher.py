@@ -21,6 +21,7 @@ def get_connection():
 
 def publish_to_rabbitmq(message: dict):
     try:
+        global channel
         channel = get_connection()
         channel.basic_publish(
             exchange='',
@@ -30,7 +31,6 @@ def publish_to_rabbitmq(message: dict):
                 delivery_mode=2,
             )
         )
-
         print(f"Publish order {message['id']} notification")
     except Exception as e:
         print(f"Error while publishing message to RabbitMQ: {e}")
