@@ -8,7 +8,7 @@ def test_root(client):
     assert response.json() == {"message": "Order Service API"}
 
 
-@pytest.mark.usefixtures("override_get_db")
+@pytest.mark.usefixtures("override_get_db", "mock_storage_service")
 def test_create_order(client, test_order_data):
     response = client.post("/orders/", json=test_order_data)
     assert response.status_code == 200
@@ -17,7 +17,7 @@ def test_create_order(client, test_order_data):
     assert response.json()["discount"] == test_order_data["discount"]
 
 
-@pytest.mark.usefixtures("override_get_db")
+@pytest.mark.usefixtures("override_get_db", "mock_storage_service")
 def test_get_order(client, test_order_data):
     create_response = client.post("/orders/", json=test_order_data)
     order_id = create_response.json()["id"]
@@ -28,7 +28,7 @@ def test_get_order(client, test_order_data):
     assert response.json()["items"] == test_order_data["items"]
 
 
-@pytest.mark.usefixtures("override_get_db")
+@pytest.mark.usefixtures("override_get_db", "mock_storage_service")
 def test_list_orders(client, test_order_data):
     client.post("/orders/", json=test_order_data)
 
@@ -38,7 +38,7 @@ def test_list_orders(client, test_order_data):
     assert response.json()[0]["items"] == test_order_data["items"]
 
 
-@pytest.mark.usefixtures("override_get_db")
+@pytest.mark.usefixtures("override_get_db", "mock_storage_service")
 def test_update_order(client, test_order_data):
     create_response = client.post("/orders/", json=test_order_data)
     order_id = create_response.json()["id"]
@@ -57,7 +57,7 @@ def test_update_order(client, test_order_data):
     assert update_response.json()["discount"] == update_data["discount"]
 
 
-@pytest.mark.usefixtures("override_get_db")
+@pytest.mark.usefixtures("override_get_db", "mock_storage_service")
 def test_delete_order(client, test_order_data):
     create_response = client.post("/orders/", json=test_order_data)
     order_id = create_response.json()["id"]
