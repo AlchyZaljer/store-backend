@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Union
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
@@ -24,7 +24,7 @@ def get_item(product_id: int, db: Session = Depends(get_db)):
     return item
 
 
-@router.post("/reserve/", response_model=Dict[str, Union[List[StorageItemResponse], str]])
+@router.post("/reserve/", response_model=dict[str, str])
 def reserve_items(items: List[StorageItemRemove], db: Session = Depends(get_db)):
     reserve_products_dict = {item.product_id: item for item in items}
 
@@ -37,11 +37,7 @@ def reserve_items(items: List[StorageItemRemove], db: Session = Depends(get_db))
         db_item = db_items_dict.get(product_id)
 
         if not db_item or db_item.quantity < reserve_item.quantity:
-            insufficient_items.append(
-                StorageItemResponse(
-                    product_id=reserve_item.product_id,
-                )
-            )
+            insufficient_items.append({"product_id": product_id})
             continue
 
         db_item.quantity -= reserve_item.quantity
@@ -61,7 +57,7 @@ def list_items(db: Session = Depends(get_db)):
     return items
 
 
-@router.patch("/items/", response_model=Dict[str, StorageItemResponse])
+@router.patch("/items/", response_model=list[StorageItemResponse])
 def update_items(updates: List[StorageItemUpdate], db: Session = Depends(get_db)):
     update_ids = [item.product_id for item in updates]
 
@@ -73,13 +69,13 @@ def update_items(updates: List[StorageItemUpdate], db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail={"not_found_products": not_found_products})
 
     for upd in updates:
-        for key, value in upd.model_dump(exclude_unset=True):
+        for key, value in upd.model_dump(exclude_unset=True).items():
             setattr(db_items_dict[upd.product_id], key, value)
 
     db.commit()
     for item in db_items:
         db.refresh(item)
-    return {"update_products": db_items}
+    return db_items
 
 
 @router.post("/items/add/", response_model=StorageItemResponse)
@@ -105,7 +101,7 @@ def add_item(item: StorageItemCreate, db: Session = Depends(get_db)):
     return db_item
 
 
-@router.post("/items/remove/", response_model=Union[StorageItemResponse, Dict[str, str]])
+@router.post("/items/remove/", response_model=Union[StorageItemResponse, dict[str, str]])
 def remove_item(item: StorageItemRemove, db: Session = Depends(get_db)):
     db_item = db.query(StorageItem).filter(StorageItem.product_id == item.product_id).first()
     if not db_item:
