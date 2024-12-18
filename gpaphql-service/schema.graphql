@@ -1,0 +1,29 @@
+type Product {
+    id: Int!
+    name: String!
+    price: Float!
+    description: String
+}
+
+type OrderItem {
+    product_id: Int!
+    quantity: Int!
+    name: String!
+    price: Float!
+    description: String
+}
+
+type Order {
+    id: String!
+    items: [OrderItem!]!
+    discount: Float!
+    status: String!
+    date: String!
+}
+
+type Query {
+    products: [Product!]!
+    product(product_id: Int!): Product
+    orders: [Order!]!
+    order(order_id: String!): Order
+}
