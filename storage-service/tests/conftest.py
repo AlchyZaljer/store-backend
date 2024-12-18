@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
@@ -45,8 +47,12 @@ def client():
 @pytest.fixture
 def test_item_data():
     return {
-        "name": "Test Item",
-        "quantity": 10,
-        "price": 99.99,
-        "description": "A test item for storage service."
+        "product_id": 101,
+        "quantity": 10
     }
+
+
+@pytest.fixture
+def mock_is_product_exist():
+    with patch("utils.is_product_exist", return_value=True):
+        yield
