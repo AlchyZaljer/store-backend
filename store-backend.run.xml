@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="store-backend" type="CompoundRunConfigurationType">
-    <toRun name="glossary-service" type="PythonConfigurationType" />
-    <toRun name="notification-service" type="PythonConfigurationType" />
-    <toRun name="order-service" type="PythonConfigurationType" />
-    <toRun name="storage-service" type="PythonConfigurationType" />
-    <method v="2" />
-  </configuration>
-</component>
