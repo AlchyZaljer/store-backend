@@ -1,0 +1,13 @@
+.idea/
+
+.venv/
+
+.git/
+
+tests/
+
+migrations/
+
+__pycache__/
+*.py[cod]
+*.log

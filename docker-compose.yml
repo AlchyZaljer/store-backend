@@ -1,0 +1,101 @@
+services:
+  glossary-service:
+    build:
+      context: ./glossary-service
+      dockerfile: Dockerfile
+    container_name: glossary_service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/glossary-db
+
+  storage-service:
+    build:
+      context: ./storage-service
+      dockerfile: Dockerfile
+    container_name: storage_service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres-db
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/storage-db
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    depends_on:
+      - mongo-db
+      - rabbitmq
+    environment:
+      - MONGO_URI=mongodb://mongo-db:27017
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    depends_on:
+      - mongo-db
+      - rabbitmq
+    environment:
+      - MONGO_URI=mongodb://mongo-db:27017
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+
+  graphql-service:
+    build:
+      context: ./graphql-service
+      dockerfile: Dockerfile
+    ports:
+      - "8004:8004"
+    depends_on:
+      - glossary-service
+      - order-service
+    environment:
+      - GLOSSARY_SERVICE_URL=http://glossary-service:8000
+      - ORDER_SERVICE_URL=http://order-service:8002
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    hostname: glossary-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db_config/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: mongo-db
+    hostname: mongo-db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: always
+
+volumes:
+  postgres-data:
+  mongo-data:

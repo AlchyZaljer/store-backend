@@ -1,10 +1,12 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from models import Base
 
 
-DATABASE_URL = "postgresql://postgres:1234@localhost:5432/glossary-db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@glossary-db:5432/glossary-db")
 
 engine = create_engine(DATABASE_URL)
 

@@ -9,8 +9,8 @@ from utils import load_schema
 SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.graphql")
 type_defs = load_schema(SCHEMA_PATH)
 
-ORDER_SERVICE_URL = "http://localhost:8002"
-GLOSSARY_SERVICE_URL = "http://localhost:8000"
+ORDER_SERVICE_URL = os.getenv("ORDER_SERVICE_URL", "http://localhost:8002")
+GLOSSARY_SERVICE_URL = os.getenv("GLOSSARY_SERVICE_URL", "http://localhost:8000")
 
 query = QueryType()
 order_item = ObjectType("OrderItem")

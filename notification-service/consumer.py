@@ -1,5 +1,6 @@
-import json
 from datetime import datetime
+import json
+import os
 
 import pika
 
@@ -8,10 +9,10 @@ from models import Notification
 
 db = next(get_db())
 
-RABBITMQ_HOST = "localhost"
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/")
 RABBITMQ_QUEUE = "notifications"
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
+connection = pika.BlockingConnection(pika.URLParameters(RABBITMQ_URL))
 channel = connection.channel()
 channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True)
 

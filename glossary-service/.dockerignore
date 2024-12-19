@@ -1,0 +1,11 @@
+.idea/
+
+.venv/
+
+.git/
+
+tests/
+
+__pycache__/
+*.py[cod]
+*.log
