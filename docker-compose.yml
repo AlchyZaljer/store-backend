@@ -22,6 +22,7 @@ services:
       - postgres-db
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/storage-db
+      - GLOSSARY_SERVICE_URL=http://glossary-service:8000
 
   order-service:
     build:
@@ -35,6 +36,7 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo-db:27017
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - STORAGE_SERVICE_URL=http://storage-service:8001
 
   notification-service:
     build:

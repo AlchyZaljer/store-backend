@@ -1,8 +1,10 @@
+import os
+
 from fastapi import HTTPException
 import httpx
 
 
-GLOSSARY_SERVICE_URL = "http://localhost:8000"
+GLOSSARY_SERVICE_URL = os.getenv("GLOSSARY_SERVICE_URL", "http://localhost:8000")
 
 
 def is_product_exist(product_id: int) -> bool:

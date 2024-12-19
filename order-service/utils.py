@@ -1,8 +1,10 @@
+import os
+
 from fastapi import HTTPException
 import httpx
 
 
-STORAGE_SERVICE_URL = "http://localhost:8001"
+STORAGE_SERVICE_URL = os.getenv("STORAGE_SERVICE_URL", "http://localhost:8001")
 
 
 async def reserve_products(items: list[dict]):
