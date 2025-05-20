@@ -31,8 +31,10 @@ services:
     ports:
       - "8002:8002"
     depends_on:
-      - mongo-db
-      - rabbitmq
+      mongo-db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     environment:
       - MONGO_URI=mongodb://mongo-db:27017
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
@@ -45,8 +47,10 @@ services:
     ports:
       - "8003:8003"
     depends_on:
-      - mongo-db
-      - rabbitmq
+      mongo-db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     environment:
       - MONGO_URI=mongodb://mongo-db:27017
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
@@ -96,7 +100,12 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
 
 volumes:
   postgres-data:
