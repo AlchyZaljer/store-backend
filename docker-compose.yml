@@ -7,7 +7,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/glossary-db
 
@@ -19,7 +20,8 @@ services:
     ports:
       - "8001:8001"
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/storage-db
       - GLOSSARY_SERVICE_URL=http://glossary-service:8000
@@ -32,7 +34,7 @@ services:
       - "8002:8002"
     depends_on:
       mongo-db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     environment:
@@ -48,7 +50,7 @@ services:
       - "8003:8003"
     depends_on:
       mongo-db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     environment:
@@ -80,6 +82,12 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./db_config/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   mongo-db:
     image: mongo:6.0
@@ -90,6 +98,12 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   rabbitmq:
     image: rabbitmq:3-management
