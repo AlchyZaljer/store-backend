@@ -4,7 +4,7 @@ import uvicorn
 from routes import router
 
 
-app = FastAPI()
+app = FastAPI(title="Glossary Service API")
 app.include_router(router)
 
 

@@ -13,7 +13,7 @@ def run_consumer():
     return process
 
 
-app = FastAPI()
+app = FastAPI(title="Notification Service API")
 app.include_router(router)
 
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     consumer_process = run_consumer()
 
     try:
-        app = FastAPI()
+        app = FastAPI(title="Notification Service API")
         app.include_router(router)
 
         uvicorn.run(app, host="0.0.0.0", port=8003)
