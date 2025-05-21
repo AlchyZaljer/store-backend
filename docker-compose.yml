@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: glossary_service
     ports:
-      - "8000:8000"
+      - "8000:80"
     depends_on:
       postgres-db:
         condition: service_healthy
@@ -18,20 +18,20 @@ services:
       dockerfile: Dockerfile
     container_name: storage_service
     ports:
-      - "8001:8001"
+      - "8001:80"
     depends_on:
       postgres-db:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres-db:5432/storage-db
-      - GLOSSARY_SERVICE_URL=http://glossary-service:8000
+      - GLOSSARY_SERVICE_URL=http://glossary-service
 
   order-service:
     build:
       context: ./order-service
       dockerfile: Dockerfile
     ports:
-      - "8002:8002"
+      - "8002:80"
     depends_on:
       mongo-db:
         condition: service_healthy
@@ -40,14 +40,14 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo-db:27017
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
-      - STORAGE_SERVICE_URL=http://storage-service:8001
+      - STORAGE_SERVICE_URL=http://storage-service
 
   notification-service:
     build:
       context: ./notification-service
       dockerfile: Dockerfile
     ports:
-      - "8003:8003"
+      - "8003:80"
     depends_on:
       mongo-db:
         condition: service_healthy
@@ -62,18 +62,17 @@ services:
       context: ./graphql-service
       dockerfile: Dockerfile
     ports:
-      - "8004:8004"
+      - "8004:80"
     depends_on:
       - glossary-service
       - order-service
     environment:
-      - GLOSSARY_SERVICE_URL=http://glossary-service:8000
-      - ORDER_SERVICE_URL=http://order-service:8002
+      - GLOSSARY_SERVICE_URL=http://glossary-service
+      - ORDER_SERVICE_URL=http://order-service
 
   postgres-db:
     image: postgres:15
     container_name: postgres-db
-    hostname: glossary-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234

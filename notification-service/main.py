@@ -24,7 +24,7 @@ if __name__ == "__main__":
         app = FastAPI(title="Notification Service API")
         app.include_router(router)
 
-        uvicorn.run(app, host="0.0.0.0", port=8003)
+        uvicorn.run(app, host="0.0.0.0", port=80)
 
     finally:
         if consumer_process.is_alive():
